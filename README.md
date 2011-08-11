@@ -15,7 +15,7 @@ did what any good lunatic would do and try something out in the JS.
 2. A different AJAX code was used to aid testing in development with Firefox/Firebug. I was finding that only the last request of
 a series was being reported successful
 3. Because all CSS is now being reused, not just max/min width media query blocks as in the original, there might be a slight performance
-hit. When tested on a reasonably normal and complex page with a average Dell with XP the preformance felt just as good as the original, but measured slower in milliseconds on average.
+hit. When tested on a reasonably normal and complex page with an average-to-slowish Dell with XP the preformance felt just as good as the original, but measured slower in milliseconds on average.
 
 ### How does this version work
 The CSS from all the linked stylesheets and style elements is captured and added to a 
