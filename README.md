@@ -8,7 +8,7 @@ did what any good lunatic would do and try something out in the JS.
 ### Positive Notes
 1. All style rules reused, not just in width media query blocks, to have rock-solid selector specificity
 2. Style elements processed
-3. A different AJAX code was used to aid testing in development with Firefox/Firebug. I found that only the last request of
+3. A different AJAX code was used to aid testing in development with Firefox/Firebug. I was finding that only the last request of
 a series was being reported successful
 4. Optimised so that calling the respond.js script element several times will work happily.
 
@@ -16,7 +16,7 @@ a series was being reported successful
 1. The cross domain part is new to me and therefore untested.
 
 ### Caveats
-1. Avoid adding a link[rel=stylesheet] with an empty href. It might mess with IE8.
+1. Avoid having stylesheet link elements with an empty href (like anyone would anyway) it might mess with IE8.
 
 # Original Respond.js documentation
 ### A fast & lightweight polyfill for min/max-width CSS3 Media Queries (for IE 6-8, and more)
