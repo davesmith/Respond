@@ -23,6 +23,8 @@ single style element in the correct order. All CSS added to the single style ele
 media query blocks - except for those already being media query blocks. Depending on the screen size the 
 media query block queries are modified.
 
+Additionally the following code was used to prevent IE6 complaining: Preventing The IE6 CSS Background Flicker: http://davidwalsh.name/preventing-css-background-flicker
+
 ### Caveats
 1. Avoid having stylesheet link elements with an empty href (like anyone would anyway) it might mess with IE8.
 
