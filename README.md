@@ -28,6 +28,9 @@ Additionally the following code was used to prevent some IE6 weirdness: Preventi
 ### Caveats
 1. Avoid having stylesheet link elements with an empty href (like anyone would anyway) it might mess with IE8.
 
+### Lastly
+Big thanks to Scott Jehl for his awesome script
+
 # Original Respond.js documentation
 ### A fast & lightweight polyfill for min/max-width CSS3 Media Queries (for IE 6-8, and more)
 
