@@ -6,7 +6,7 @@ I was curious about why that was and rather than find the answer in the CSS I
 did what any good lunatic would do and try something out in the JS.
 
 ### Positive Notes
-1. All style rules reused, not just in width media query blocks to have rock-solid selector specificity
+1. All style rules reused, not just in width media query blocks, to have rock-solid selector specificity
 2. Style elements processed
 3. A different AJAX code was used to aid testing in development with Firefox/Firebug. I found that only the last request of
 a series was being reported successful
