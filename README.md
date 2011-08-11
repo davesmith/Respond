@@ -5,16 +5,15 @@ I found while working on a site the display of the page wasn't the same in IE wh
 I was curious about why that was and rather than find the answer in the CSS I
 did what any lunatic would do and try something out.
 
-### Main Changes
-1. All CSS including from within style elements ripped, modified and added.
-2. Different AJAX code used to aid testing with Firefox/Firebug as it was
-reporting only the last request of a series being successful.
-3. Coded to be a bit more modular in that it should be possible to have
-<script src="respond.js"></script> several times and all to work well.
+### Description
+1. All style rules reused, not just in width media query blocks to have rock-solid selector specificity
+2. Style elements processed
+3. A different AJAX code was used to aid testing in development with Firefox/Firebug. I found that only the last request of
+a series was being reported successful
+4. Optimised so that calling the respond.js script element several times will work happily.
 
 ### Caveats
-1. Avoid adding a link[rel=stylesheet] with an empty href. It might mess with IE8 and I couldn't be bothered to sort out IE's href property, which includes the current URL.
-
+1. Avoid adding a link[rel=stylesheet] with an empty href. It might mess with IE8.
 
 ### A fast & lightweight polyfill for min/max-width CSS3 Media Queries (for IE 6-8, and more)
 
