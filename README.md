@@ -1,4 +1,4 @@
-# Dave Smith's fork of the excellent Respond.js
+# Dave's fork of Respond.js
 
 ### Firstly why
 I found while working on a site the display of the page wasn't the same in IE when using the original Respond.js, 
