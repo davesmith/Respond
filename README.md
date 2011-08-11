@@ -1,19 +1,18 @@
-# Respond.js
-### Dave Smith's fork
+# Dave Smith's fork of the excellent Respond.js
 
-## Firstly why
+### Firstly why
 I found while working on a site the display of the page wasn't the same in IE when using the original Respond.js, 
 I was curious about why that was and rather than find the answer in the CSS I
 did what any lunatic would do and try something out.
 
-##Main Changes
+### Main Changes
 1. All CSS including from within style elements ripped, modified and added.
 2. Different AJAX code used to aid testing with Firefox/Firebug as it was
 reporting only the last request of a series being successful.
 3. Coded to be a bit more modular in that it should be possible to have
 <script src="respond.js"></script> several times and all to work well.
 
-##Caveats
+### Caveats
 1. Avoid adding a link[rel=stylesheet] with an empty href. It might mess with IE8 and I couldn't be bothered to sort out IE's href property, which includes the current URL.
 
 
