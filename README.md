@@ -5,16 +5,20 @@ I found while working on a site the display of the page wasn't the same in IE wh
 I was curious about why that was and rather than find the answer in the CSS I
 did what any lunatic would do and try something out.
 
-### Description
+### Positive Notes
 1. All style rules reused, not just in width media query blocks to have rock-solid selector specificity
 2. Style elements processed
 3. A different AJAX code was used to aid testing in development with Firefox/Firebug. I found that only the last request of
 a series was being reported successful
 4. Optimised so that calling the respond.js script element several times will work happily.
 
+### Negative Notes
+1. The cross domain part is new to me and therefore untested.
+
 ### Caveats
 1. Avoid adding a link[rel=stylesheet] with an empty href. It might mess with IE8.
 
+# Original Respond.js documentation
 ### A fast & lightweight polyfill for min/max-width CSS3 Media Queries (for IE 6-8, and more)
 
  - Copyright 2011: Scott Jehl, scottjehl.com
