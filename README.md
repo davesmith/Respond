@@ -8,13 +8,13 @@ did what any good lunatic would do and try something out in the JS.
 ### Positive Notes
 1. Fixed the small display issue I had with the site I was working on
 2. Style elements processed
-3. A different AJAX code was used to aid testing in development with Firefox/Firebug. I was finding that only the last request of
-a series was being reported successful
-4. Optimised so that calling the respond.js script element several times will work happily
+3. Optimised so that calling the respond.js script element several times will work happily
 
-### Negative Notes
+### Notes
 1. The cross domain part is new to me and therefore untested and I not needed it yet
-2. Because all CSS is now being reused, not just max/min width media query blocks as in the original, there might be a slight performance
+2. A different AJAX code was used to aid testing in development with Firefox/Firebug. I was finding that only the last request of
+a series was being reported successful
+3. Because all CSS is now being reused, not just max/min width media query blocks as in the original, there might be a slight performance
 hit. When tested on a reasonably normal and complex page with a average Dell with XP the preformance felt just as good as the original, but measured slower in milliseconds on average.
 
 ### How does this version work
