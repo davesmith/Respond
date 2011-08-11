@@ -10,7 +10,7 @@ did what any good lunatic would do and try something out in the JS.
 2. Style elements processed
 3. A different AJAX code was used to aid testing in development with Firefox/Firebug. I was finding that only the last request of
 a series was being reported successful
-4. Optimised so that calling the respond.js script element several times will work happily.
+4. Optimised so that calling the respond.js script element several times will work happily
 
 ### Negative Notes
 1. The cross domain part is new to me and therefore untested.
