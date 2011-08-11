@@ -1,280 +1,324 @@
-/*! Respond.js: min/max-width media query polyfill. (c) Scott Jehl. MIT/GPLv2 Lic. j.mp/respondjs  */
-(function( win, mqSupported ){
-	//exposed namespace
-	win.respond		= {};
+//
+// Dave Smith's fork of the excellent Respond.js polyfill by Scott Jehl
+// http://github.com/davesmith/Respond
+//
+// Reasons for the fork
+// The display of the page wasn't the same in IE when using the original Respond.js, 
+// I was curious about why that was and rather than find the answer in the CSS I
+// did what any lunatic would do and try something out.
+//
+// Main Changes
+// 1. All CSS including from within style elements ripped, modified and added.
+// 2. Different AJAX code used to aid testing with Firefox/Firebug as it was
+// reporting only the last request of a series being successful.
+// 3. Coded to be a bit more modular in that it should be possible to have
+// <script src="respond.js"></script> several times and all to work well.
+//
+// Caveats
+// 1. Avoid adding a link[rel=stylesheet] with an empty href. It might mess with IE8 and I couldn't be bothered to sort out IE's href property, which includes the current URL.
+//
+// Resources
+// 1. http://www.quirksmode.org/bugreports/archives/2006/01/IE_wont_allow_documentcreateElementstyle.html
+// 2. http://ejohn.org/blog/dom-documentfragments/
+// 3. Preventing The IE6 CSS Background Flicker: http://davidwalsh.name/preventing-css-background-flicker
+
+(function (win, mqSupported) {
+
+    var respondSSLength = 0;
 	
-	//define update even in native-mq-supporting browsers, to avoid errors
-	respond.update	= function(){};
+	mqSupported = false;
 	
-	//expose media query support flag for external use
-	respond.mediaQueriesSupported	= mqSupported;
-	
-	//if media queries are supported, exit here
-	if( mqSupported ){ return; }
-	
-	//define vars
-	var doc 			= win.document,
-		docElem 		= doc.documentElement,
-		mediastyles		= [],
-		rules			= [],
-		appendedEls 	= [],
-		parsedSheets 	= {},
-		resizeThrottle	= 30,
-		head 			= doc.getElementsByTagName( "head" )[0] || docElem,
-		links			= head.getElementsByTagName( "link" ),
-		requestQueue	= [],
+	// Is respond already existing?
+	if (win.respond) {
+		// If media queries are supported, exit here
+		if (mqSupported) {
+			return;
+		}
+		// Do update but not of any stylesheets already loaded.
+		respond.update(true);
+	}
+	else {
+		//exposed namespace
+		win.respond = {};
 		
-		//loop stylesheets, send text content to translate
-		ripCSS			= function(){
-			var sheets 	= links,
-				sl 		= sheets.length,
-				i		= 0,
-				//vars for loop:
-				sheet, href, media, isCSS;
+		respond.account = [];
+		
+		//define update even in native-mq-supporting browsers, to avoid errors
+		respond.update = function () {};
+	
+		//expose media query support flag for external use
+		respond.mediaQueriesSupported = mqSupported;
+		
+		// If media queries are supported, exit here
+		if (mqSupported) {
+			return;
+		}
+		
+		// Stop IE 6 from flickering a little and getting its knickers in a twist.
+		try {
+			document.execCommand('BackgroundImageCache', false, true);
+		}
+		catch(e) {}
+	
+		var doc = win.document,
+			docElem = doc.documentElement,
+			docHead = doc.getElementsByTagName('head')[0];
 
-			for( ; i < sl; i++ ){
-				sheet	= sheets[ i ],
-				href	= sheet.href,
-				media	= sheet.media,
-				isCSS	= sheet.rel && sheet.rel.toLowerCase() === "stylesheet";
-
-				//only links plz and prevent re-parsing
-				if( !!href && isCSS && !parsedSheets[ href ] ){
-					// selectivizr exposes css through the rawCssText expando
-					if (sheet.styleSheet && sheet.styleSheet.rawCssText) {
-						translate( sheet.styleSheet.rawCssText, href, media );
-						parsedSheets[ href ] = true;
-					} else {
-						if( !/^([a-zA-Z]+?:(\/\/)?)/.test( href )
-							|| href.replace( RegExp.$1, "" ).split( "/" )[0] === win.location.host ){
-							requestQueue.push( {
-								href: href,
-								media: media
-							} );
+		// Removed Tweaked Ajax functions from Quirksmode
+		//   While testing in Firebug Firefox, to see what was going on, 
+		//   only the last request was working; requests before that were being aborted.
+		// Tweaked Ajax functions from Jeremey Keith: http://bulletproofajax.com/tokyo/slides/02xhr.html
+		//   One modification made to additionally check for no ActiveX support
+		//   Two, added callback on failure.
+		function getHTTPObject() {
+			var xhr = false;
+			if (window.XMLHttpRequest && !window.ActiveXObject) {
+				xhr = new XMLHttpRequest();
+			}
+			else if (window.ActiveXObject) {
+				try {
+					xhr = new ActiveXObject("Msxml2.XMLHTTP");
+				}
+				catch(e) {
+					try {
+						xhr = new ActiveXObject("Microsoft.XMLHTTP");
+					}
+					catch(e) {
+						xhr = false;
+					}
+				}
+			}
+			return xhr;
+		}
+		function grabFile(file, callback) {
+			var request = getHTTPObject();
+			if (request) {
+				request.onreadystatechange = function() {
+					if (request.readyState == 4) {
+						if (request.status == 200 || request.status == 304) {
+							callback(request.responseText);
+						}
+						else {
+							callback(false);
+						}
+					}
+				};
+				request.open("GET", file, true);
+				request.send(null);
+			}
+		}
+		
+		respond.stylesheets = [];
+		
+		respond.createCheckSum = function(n) {
+			var rtn = n;
+			if (n > 1) {
+				rtn = 0;
+				for (var i = 0; i <= n; i++) {
+					rtn += i;
+				}
+			}
+			return rtn;
+		};
+		respond.ajaxDone = function(i, respondAccountLength) {
+			i++;
+			var respondAccount = respond.account[respondAccountLength - 1];
+			respondAccount.ajaxCount += i;
+			if (respondAccount.ajaxCheckSum === respondAccount.ajaxCount) {
+				applyMedia();
+			}
+		};
+		
+		// RESPOND.UPDATE
+		// Expose update for re-running respond later on
+		respond.update = function(avoidPreviouslyGotMedia) {
+			respond.account.push({ajaxCount: 0, ajaxCheckSum: 0});
+			var respondAccountLength = respond.account.length;
+			
+			avoidPreviouslyGotMedia = avoidPreviouslyGotMedia || false;
+			var els = docHead.getElementsByTagName('*'),
+				elsLength = els.length, i = 0, nodeName;
+			var ss = [];
+			for (; i < elsLength; i++) {
+				nodeName = els[i].nodeName.toLowerCase();
+				if ((nodeName == 'link' && els[i].rel.toLowerCase() == 'stylesheet' && els[i].href) || (nodeName == 'style' && els[i].id != 'respond-style-element')) {
+					if (avoidPreviouslyGotMedia && !els[i].___respond) {
+						ss[ss.length] = els[i];
+						els[i].___respond = true;
+					}
+				}
+			}
+			i = 0;
+			ssl = ss.length;
+			if (ssl) {
+				// Remove the current one if it exists.
+				if (respond.element) {
+					docHead.appendChild(respond.element.parentNode.removeChild(respond.element));
+				}
+				else {
+					respond.element = doc.createElement('span');
+					respond.element.id = 'respond-style';
+					docHead.appendChild(respond.element);
+				}
+				respond.element = doc.getElementById(respond.element.id);
+				
+				var rssl = respondSSLength;
+				respondSSLength += ssl;
+				respond.account[respondAccountLength - 1].ajaxCheckSum = respond.createCheckSum(ssl);
+				
+				for (; i < ssl; i++) {
+					if (ss[i].nodeName.toLowerCase() == 'link') {
+						media = ss[i].media || undefined;
+						(function(href, media, i) {
+							grabFile(href, function(s) {
+								if (s) {
+									// Try to repair URLs.
+									href = href.substring(0, href.lastIndexOf("/"));
+									//if path exists, tack on trailing slash
+									if (href.length) {
+										href += "/";
+									}
+									s = s.replace(/(url\()['"]?([^\/\)'"][^:\)'"]+)['"]?(\))/g, "$1" + href + "$2$3");
+									respond.stylesheets[rssl + i] = {css: s, media: media};
+									respond.ajaxDone(i, respondAccountLength);
+								}
+								else {
+									respond.ajaxDone(i, respondAccountLength);
+								}
+							});
+						})(ss[i].href, media, i);
+					}
+					else {
+						respond.stylesheets[rssl + i] = {css: ss[i].innerHTML, media: ss[i].media};
+						respond.ajaxDone(i, respondAccountLength);
+					}
+				}
+			}
+		}
+		// @media all and (min-width:500px) { … }
+		// @media (min-width:500px) { … }
+		// @media screen and (min-width: 400px) and (max-width: 700px)
+		// @media handheld and (min-width: 20em), 
+		//   screen and (min-width: 20em) { … }
+		var processMediaQueryList = function(mql, currWidth) {
+			return mql.replace(/\sand(.|\n)*\((max|min)\-width\s*:\s*(\d+)([a-zA-Z]+)\s*\)/gi, function(mtch, p1, p2, p3, p4, offset, str) {
+				var rtn = mtch;
+				if ((p2 === 'min' && currWidth >= p3) || (p2 === 'max' && currWidth <= p3)) {
+					rtn = '';
+				}
+				return rtn;
+			});
+		};
+		
+		var applyMedia = function (undefined) {
+			var name = "clientWidth",
+				docElemProp = docElem[name],
+				docBodyProp = (doc.body) ? doc.body[name] : undefined,
+				currWidth = doc.compatMode === "CSS1Compat" && docElemProp || docBodyProp || docElemProp,
+				ssl = respond.stylesheets.length,
+				i = 0, j, cssText = '', mr, css
+					now = (new Date()).getTime();
+			if (ssl) {
+				for (; i < ssl; i++) {
+					if (respond.stylesheets[i]) {
+						media = respond.stylesheets[i].media || '';
+						css = respond.stylesheets[i].css;
+						
+						if (css) {
+							// if it has media then we may want to add it to the styles
+							if (/@media/g.test(css)) {
+								j = 0;
+								mediaQueryLists = css.split('@media');
+								cssBeforeMediaQueryLists = mediaQueryLists.shift();
+								mediaQueryListsLength = mediaQueryLists.length;
+								// Go through each Media Query Block, which may have normal CSS at the end of each block.
+								for (; j < mediaQueryListsLength; j++) {
+									cssAfterMediaQueryList = mediaQueryLists[j].split('{');
+									mediaQueryList = cssAfterMediaQueryList.shift();
+									cssAfterMediaQueryList = cssAfterMediaQueryList.join('{');
+									
+									// Now we have the media query list and the block of everything after.
+									cssAfterMediaQueryList = cssAfterMediaQueryList.replace(/\}[^\{]+\}/g, "}\n}\n@media " + 
+									((media) ? processMediaQueryList(media, currWidth) : 'all')  + " {\n");
+									
+									mediaQueryLists[j] = processMediaQueryList(mediaQueryList, currWidth) +
+										' {' + cssAfterMediaQueryList + "\n}\n";
+								}
+								text = "\n @media " +  ((media) ? processMediaQueryList(media, currWidth) : 'all') + 
+								" { " + cssBeforeMediaQueryLists + " }\n@media" + mediaQueryLists.join('@media');
+							}
+							else {
+								text = "\n @media " + ((media) ? processMediaQueryList(media, currWidth) : 'all') + " {\n" + css + "\n}";
+							}
+							cssText += text;
 						}
 					}
 				}
 			}
-			makeRequests();
-				
-		},
+			respond.element = doc.getElementById(respond.element.id);
+			if (ssl === respondSSLength) {
+				respond.element.innerHTML = '_<style id="respond-style-element">' + cssText + '</style>';
+			}
+		};
+		// End of applyMedia function
 		
-		//recurse through request queue, get css text
-		makeRequests	= function(){
-			if( requestQueue.length ){
-				var thisRequest = requestQueue.shift();
-				
-				ajax( thisRequest.href, function( styles ){
-					translate( styles, thisRequest.href, thisRequest.media );
-					parsedSheets[ thisRequest.href ] = true;
-					makeRequests();
-				} );
-			}
-		},
 		
-		//find media blocks in css text, convert to style blocks
-		translate			= function( styles, href, media ){
-			var qs			= styles.match(  /@media[^\{]+\{([^\{\}]+\{[^\}\{]+\})+/gi ),
-				ql			= qs && qs.length || 0,
-				//try to get CSS path
-				href		= href.substring( 0, href.lastIndexOf( "/" )),
-				repUrls		= function( css ){
-					return css.replace( /(url\()['"]?([^\/\)'"][^:\)'"]+)['"]?(\))/g, "$1" + href + "$2$3" );
-				},
-				useMedia	= !ql && media,
-				//vars used in loop
-				i			= 0,
-				j, fullq, thisq, eachq, eql;
-
-			//if path exists, tack on trailing slash
-			if( href.length ){ href += "/"; }	
-				
-			//if no internal queries exist, but media attr does, use that	
-			//note: this currently lacks support for situations where a media attr is specified on a link AND
-				//its associated stylesheet has internal CSS media queries.
-				//In those cases, the media attribute will currently be ignored.
-			if( useMedia ){
-				ql = 1;
-			}
-			
-
-			for( ; i < ql; i++ ){
-				j	= 0;
-				
-				//media attr
-				if( useMedia ){
-					fullq = media;
-					rules.push( repUrls( styles ) );
-				}
-				//parse for styles
-				else{
-					fullq	= qs[ i ].match( /@media ([^\{]+)\{([\S\s]+?)$/ ) && RegExp.$1;
-					rules.push( RegExp.$2 && repUrls( RegExp.$2 ) );
-				}
-				
-				eachq	= fullq.split( "," );
-				eql		= eachq.length;
-				
-					
-				for( ; j < eql; j++ ){
-					thisq	= eachq[ j ];
-					mediastyles.push( { 
-						media	: thisq.match( /(only\s+)?([a-zA-Z]+)(\sand)?/ ) && RegExp.$2,
-						rules	: rules.length - 1,
-						minw	: thisq.match( /\(min\-width:[\s]*([\s]*[0-9]+)px[\s]*\)/ ) && parseFloat( RegExp.$1 ), 
-						maxw	: thisq.match( /\(max\-width:[\s]*([\s]*[0-9]+)px[\s]*\)/ ) && parseFloat( RegExp.$1 )
-					} );
-				}	
-			}
-
-			applyMedia();
-		},
-        	
-		lastCall,
-		
-		resizeDefer,
-		
-		//enable/disable styles
-		applyMedia			= function( fromResize ){
-			var name		= "clientWidth",
-				docElemProp	= docElem[ name ],
-				currWidth 	= doc.compatMode === "CSS1Compat" && docElemProp || doc.body[ name ] || docElemProp,
-				styleBlocks	= {},
-				dFrag		= doc.createDocumentFragment(),
-				lastLink	= links[ links.length-1 ],
-				now 		= (new Date()).getTime();
-			
-			//throttle resize calls	
-			if( fromResize && lastCall && now - lastCall < resizeThrottle ){
-				clearTimeout( resizeDefer );
-				resizeDefer = setTimeout( applyMedia, resizeThrottle );
-				return;
-			}
-			else {
-				lastCall	= now;
-			}
-										
-			for( var i in mediastyles ){
-				var thisstyle = mediastyles[ i ];
-				if( !thisstyle.minw && !thisstyle.maxw || 
-					( !thisstyle.minw || thisstyle.minw && currWidth >= thisstyle.minw ) && 
-					(!thisstyle.maxw || thisstyle.maxw && currWidth <= thisstyle.maxw ) ){						
-						if( !styleBlocks[ thisstyle.media ] ){
-							styleBlocks[ thisstyle.media ] = [];
-						}
-						styleBlocks[ thisstyle.media ].push( rules[ thisstyle.rules ] );
-				}
-			}
-			
-			//remove any existing respond style element(s)
-			for( var i in appendedEls ){
-				if( appendedEls[ i ] && appendedEls[ i ].parentNode === head ){
-					head.removeChild( appendedEls[ i ] );
-				}
-			}
-			
-			//inject active styles, grouped by media type
-			for( var i in styleBlocks ){
-				var ss		= doc.createElement( "style" ),
-					css		= styleBlocks[ i ].join( "\n" );
-				
-				ss.type = "text/css";	
-				ss.media	= i;
-				
-				if ( ss.styleSheet ){ 
-		        	ss.styleSheet.cssText = css;
-		        } 
-		        else {
-					ss.appendChild( doc.createTextNode( css ) );
-		        }
-		        dFrag.appendChild( ss );
-				appendedEls.push( ss );
-			}
-			
-			//append to DOM at once
-			head.insertBefore( dFrag, lastLink.nextSibling );
-		},
-		//tweaked Ajax functions from Quirksmode
-		ajax = function( url, callback ) {
-			var req = xmlHttp();
-			if (!req){
-				return;
-			}	
-			req.open( "GET", url, true );
-			req.onreadystatechange = function () {
-				if ( req.readyState != 4 || req.status != 200 && req.status != 304 ){
-					return;
-				}
-				callback( req.responseText );
-			}
-			if ( req.readyState == 4 ){
-				return;
-			}
-			req.send( null );
-		},
-		//define ajax obj 
-		xmlHttp = (function() {
-			var xmlhttpmethod = false;	
-			try {
-				xmlhttpmethod = XMLHttpRequest();
-			}
-			catch( e ){
-				xmlhttpmethod = new ActiveXObject( "Microsoft.XMLHTTP" );
-			}
-			return function(){
-				return xmlhttpmethod;
-			};
-		})();
+		// Get things started.
+		respond.update(true);
 	
-	//translate CSS
-	ripCSS();
-	
-	//expose update for re-running respond later on
-	respond.update = ripCSS;
-	
-	//adjust on resize
-	function callMedia(){
-		applyMedia( true );
-	}
-	if( win.addEventListener ){
-		win.addEventListener( "resize", callMedia, false );
-	}
-	else if( win.attachEvent ){
-		win.attachEvent( "onresize", callMedia );
+		function callMedia() {
+			if (win.removeEventListener) {
+				win.removeEventListener("resize", callMedia, false);
+			}
+			else if (win.detachEvent) {
+				win.detachEvent("onresize", callMedia);
+			}
+			applyMedia(true);
+			if (win.addEventListener) {
+				win.addEventListener("resize", callMedia, false);
+			}
+			else if (win.attachEvent) {
+				win.attachEvent("onresize", callMedia);
+			}
+		}
+		if (win.addEventListener) {
+			win.addEventListener("resize", callMedia, false);
+		}
+		else if (win.attachEvent) {
+			win.attachEvent("onresize", callMedia);
+		}
 	}
 })(
-	this,
-	(function( win ){
-		
-		//for speed, flag browsers with window.matchMedia support and IE 9 as supported
-		if( win.matchMedia ){ return true; }
+this, (function (win) {
 
-		var bool,
-			doc			= document,
-			docElem		= doc.documentElement,
-			refNode		= docElem.firstElementChild || docElem.firstChild,
-			// fakeBody required for <FF4 when executed in <head>
-			fakeUsed	= !doc.body,
-			fakeBody	= doc.body || doc.createElement( "body" ),
-			div			= doc.createElement( "div" ),
-			q			= "only all";
-			
-		div.id = "mq-test-1";
-		div.style.cssText = "position:absolute;top:-99em";
-		fakeBody.appendChild( div );
-		
-		div.innerHTML = '_<style media="'+q+'"> #mq-test-1 { width: 9px; }</style>';
-		if( fakeUsed ){
-			docElem.insertBefore( fakeBody, refNode );
-		}	
-		div.removeChild( div.firstChild );
-		bool = div.offsetWidth == 9;  
-		if( fakeUsed ){
-			docElem.removeChild( fakeBody );
-		}	
-		else{
-			fakeBody.removeChild( div );
-		}
-		return bool;
-	})( this )
-);
+    //for speed, flag browsers with window.matchMedia support and IE 9 as supported
+    if (win.matchMedia) {
+        return true;
+    }
+
+    var bool, doc = document,
+        docElem = doc.documentElement,
+        refNode = docElem.firstElementChild || docElem.firstChild,
+        // fakeBody required for <FF4 when executed in <head>
+        fakeUsed = !doc.body,
+        fakeBody = doc.body || doc.createElement("body"),
+        div = doc.createElement("div"),
+        q = "only all";
+
+    div.id = "mq-test-1";
+    div.style.cssText = "position:absolute;top:-99em";
+    fakeBody.appendChild(div);
+
+    div.innerHTML = '_<style media="' + q + '"> #mq-test-1 { width: 9px; }</style>';
+    if (fakeUsed) {
+        docElem.insertBefore(fakeBody, refNode);
+    }
+    div.removeChild(div.firstChild);
+    bool = div.offsetWidth == 9;
+    if (fakeUsed) {
+        docElem.removeChild(fakeBody);
+    } else {
+        fakeBody.removeChild(div);
+    }
+    return bool;
+})(this));
