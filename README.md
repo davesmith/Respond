@@ -1,9 +1,9 @@
 # Dave's fork of Respond.js
 
 ### Firstly why
-I found while working on a site the display of a part of the page wasn't quite the same in IE when using the original Respond.js, 
+I found while working on a site the display of a part of the page wasn't quite the same in IE when using the original Respond.js. 
 I was curious about why that was and rather than find the answer in the CSS I
-did what any lunatic would do and try something out in the JS.
+did what any good lunatic would do and try something out in the JS.
 
 ### Positive Notes
 1. All style rules reused, not just in width media query blocks to have rock-solid selector specificity
