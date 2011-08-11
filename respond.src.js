@@ -1,26 +1,6 @@
 //
 // Dave Smith's fork of the excellent Respond.js polyfill by Scott Jehl
 // http://github.com/davesmith/Respond
-//
-// Reasons for the fork
-// The display of the page wasn't the same in IE when using the original Respond.js, 
-// I was curious about why that was and rather than find the answer in the CSS I
-// did what any lunatic would do and try something out.
-//
-// Main Changes
-// 1. All CSS including from within style elements ripped, modified and added.
-// 2. Different AJAX code used to aid testing with Firefox/Firebug as it was
-// reporting only the last request of a series being successful.
-// 3. Coded to be a bit more modular in that it should be possible to have
-// <script src="respond.js"></script> several times and all to work well.
-//
-// Caveats
-// 1. Avoid adding a link[rel=stylesheet] with an empty href. It might mess with IE8 and I couldn't be bothered to sort out IE's href property, which includes the current URL.
-//
-// Resources
-// 1. http://www.quirksmode.org/bugreports/archives/2006/01/IE_wont_allow_documentcreateElementstyle.html
-// 2. http://ejohn.org/blog/dom-documentfragments/
-// 3. Preventing The IE6 CSS Background Flicker: http://davidwalsh.name/preventing-css-background-flicker
 
 (function (win, mqSupported) {
 
