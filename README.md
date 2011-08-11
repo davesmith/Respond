@@ -13,7 +13,7 @@ a series was being reported successful
 4. Optimised so that calling the respond.js script element several times will work happily
 
 ### Negative Notes
-1. The cross domain part is new to me and therefore untested.
+1. The cross domain part is new to me and therefore untested and I not needed it yet
 
 ### Caveats
 1. Avoid having stylesheet link elements with an empty href (like anyone would anyway) it might mess with IE8.
