@@ -1,33 +1,34 @@
 //
 // Dave Smith's fork of the excellent Respond.js polyfill by Scott Jehl
 // http://github.com/davesmith/Respond
+// 12
 
 (function (win, mqSupported) {
 
-    var respondSSLength = 0;
-	
+    var respondezVousSSLength = 0;
+    
 	mqSupported = false;
 	
-	// Is respond already existing?
-	if (win.respond) {
+	// Is respondezVous already existing?
+	if (win.respondezVous) {
 		// If media queries are supported, exit here
 		if (mqSupported) {
 			return;
 		}
 		// Do update but not of any stylesheets already loaded.
-		respond.update(true);
+		respondezVous.update(true);
 	}
 	else {
 		//exposed namespace
-		win.respond = {};
+		win.respondezVous = {};
 		
-		respond.account = [];
+		respondezVous.account = [];
 		
 		//define update even in native-mq-supporting browsers, to avoid errors
-		respond.update = function () {};
+		respondezVous.update = function () {};
 	
 		//expose media query support flag for external use
-		respond.mediaQueriesSupported = mqSupported;
+		respondezVous.mediaQueriesSupported = mqSupported;
 		
 		// If media queries are supported, exit here
 		if (mqSupported) {
@@ -88,9 +89,9 @@
 			}
 		}
 		
-		respond.stylesheets = [];
+		respondezVous.stylesheets = [];
 		
-		respond.createCheckSum = function(n) {
+		respondezVous.createCheckSum = function(n) {
 			var rtn = n;
 			if (n > 1) {
 				rtn = 0;
@@ -100,20 +101,20 @@
 			}
 			return rtn;
 		};
-		respond.ajaxDone = function(i, respondAccountLength) {
+		respondezVous.ajaxDone = function(i, respondezVousAccountLength) {
 			i++;
-			var respondAccount = respond.account[respondAccountLength - 1];
-			respondAccount.ajaxCount += i;
-			if (respondAccount.ajaxCheckSum === respondAccount.ajaxCount) {
+			var respondezVousAccount = respondezVous.account[respondezVousAccountLength - 1];
+			respondezVousAccount.ajaxCount += i;
+			if (respondezVousAccount.ajaxCheckSum === respondezVousAccount.ajaxCount) {
 				applyMedia();
 			}
 		};
 		
-		// RESPOND.UPDATE
-		// Expose update for re-running respond later on
-		respond.update = function(avoidPreviouslyGotMedia) {
-			respond.account.push({ajaxCount: 0, ajaxCheckSum: 0});
-			var respondAccountLength = respond.account.length;
+		// respondezVous.UPDATE
+		// Expose update for re-running respondezVous later on
+		respondezVous.update = function(avoidPreviouslyGotMedia) {
+			respondezVous.account.push({ajaxCount: 0, ajaxCheckSum: 0});
+			var respondezVousAccountLength = respondezVous.account.length;
 			
 			avoidPreviouslyGotMedia = avoidPreviouslyGotMedia || false;
 			var els = docHead.getElementsByTagName('*'),
@@ -121,10 +122,10 @@
 			var ss = [];
 			for (; i < elsLength; i++) {
 				nodeName = els[i].nodeName.toLowerCase();
-				if ((nodeName == 'link' && els[i].rel.toLowerCase() == 'stylesheet' && els[i].href) || (nodeName == 'style' && els[i].id != 'respond-style-element')) {
-					if (avoidPreviouslyGotMedia && !els[i].___respond) {
+				if ((nodeName == 'link' && els[i].rel.toLowerCase() == 'stylesheet' && els[i].href) || (nodeName == 'style' && els[i].id != 'respondezVous-style-element')) {
+					if (avoidPreviouslyGotMedia && !els[i].___respondezVous) {
 						ss[ss.length] = els[i];
-						els[i].___respond = true;
+						els[i].___respondezVous = true;
 					}
 				}
 			}
@@ -132,19 +133,19 @@
 			ssl = ss.length;
 			if (ssl) {
 				// Remove the current one if it exists.
-				if (respond.element) {
-					docHead.appendChild(respond.element.parentNode.removeChild(respond.element));
+				if (respondezVous.element) {
+					docHead.appendChild(respondezVous.element.parentNode.removeChild(respondezVous.element));
 				}
 				else {
-					respond.element = doc.createElement('span');
-					respond.element.id = 'respond-style';
-					docHead.appendChild(respond.element);
+					respondezVous.element = doc.createElement('span');
+					respondezVous.element.id = 'respondezVous-style';
+					docHead.appendChild(respondezVous.element);
 				}
-				respond.element = doc.getElementById(respond.element.id);
+				respondezVous.element = doc.getElementById(respondezVous.element.id);
 				
-				var rssl = respondSSLength;
-				respondSSLength += ssl;
-				respond.account[respondAccountLength - 1].ajaxCheckSum = respond.createCheckSum(ssl);
+				var rssl = respondezVousSSLength;
+				respondezVousSSLength += ssl;
+				respondezVous.account[respondezVousAccountLength - 1].ajaxCheckSum = respondezVous.createCheckSum(ssl);
 				
 				for (; i < ssl; i++) {
 					if (ss[i].nodeName.toLowerCase() == 'link') {
@@ -159,18 +160,18 @@
 										href += "/";
 									}
 									s = s.replace(/(url\()['"]?([^\/\)'"][^:\)'"]+)['"]?(\))/g, "$1" + href + "$2$3");
-									respond.stylesheets[rssl + i] = {css: s, media: media};
-									respond.ajaxDone(i, respondAccountLength);
+									respondezVous.stylesheets[rssl + i] = {css: s, media: media};
+									respondezVous.ajaxDone(i, respondezVousAccountLength);
 								}
 								else {
-									respond.ajaxDone(i, respondAccountLength);
+									respondezVous.ajaxDone(i, respondezVousAccountLength);
 								}
 							});
 						})(ss[i].href, media, i);
 					}
 					else {
-						respond.stylesheets[rssl + i] = {css: ss[i].innerHTML, media: ss[i].media};
-						respond.ajaxDone(i, respondAccountLength);
+						respondezVous.stylesheets[rssl + i] = {css: ss[i].innerHTML, media: ss[i].media};
+						respondezVous.ajaxDone(i, respondezVousAccountLength);
 					}
 				}
 			}
@@ -195,14 +196,14 @@
 				docElemProp = docElem[name],
 				docBodyProp = (doc.body) ? doc.body[name] : undefined,
 				currWidth = doc.compatMode === "CSS1Compat" && docElemProp || docBodyProp || docElemProp,
-				ssl = respond.stylesheets.length,
+				ssl = respondezVous.stylesheets.length,
 				i = 0, j, cssText = '', mr, css
 					now = (new Date()).getTime();
 			if (ssl) {
 				for (; i < ssl; i++) {
-					if (respond.stylesheets[i]) {
-						media = respond.stylesheets[i].media || '';
-						css = respond.stylesheets[i].css;
+					if (respondezVous.stylesheets[i]) {
+						media = respondezVous.stylesheets[i].media || '';
+						css = respondezVous.stylesheets[i].css;
 						
 						if (css) {
 							// if it has media then we may want to add it to the styles
@@ -235,16 +236,16 @@
 					}
 				}
 			}
-			respond.element = doc.getElementById(respond.element.id);
-			if (ssl === respondSSLength) {
-				respond.element.innerHTML = '_<style id="respond-style-element">' + cssText + '</style>';
+			respondezVous.element = doc.getElementById(respondezVous.element.id);
+			if (ssl === respondezVousSSLength) {
+				respondezVous.element.innerHTML = '_<style id="respondezVous-style-element">' + cssText + '</style>';
 			}
 		};
 		// End of applyMedia function
 		
 		
 		// Get things started.
-		respond.update(true);
+		respondezVous.update(true);
 	
 		function callMedia() {
 			if (win.removeEventListener) {
