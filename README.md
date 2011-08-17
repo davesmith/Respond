@@ -19,7 +19,7 @@ a series was being reported successful
 4. Because all CSS is being captured, not just max/min width media query blocks as in the original, there might be a slight performance
 hit. When tested on a reasonably normal and complex page with an average-to-slowish Dell with XP the preformance felt just as good as the original, but measured slower in milliseconds on average.
 
-### How does this version work
+### How the fork this version works
 The CSS from all the linked stylesheets and style elements is captured and added to a 
 single style element in the correct order. All CSS added to the single style element is wrapped in 
 media query blocks - except for those already being media query blocks. Depending on the screen size the 
