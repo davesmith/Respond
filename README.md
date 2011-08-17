@@ -21,7 +21,7 @@ hit. When tested on a reasonably normal and complex page with an average-to-slow
 
 ### How the fork this version works
 The CSS from all the linked stylesheets and style elements is captured and added to a 
-single style element in the correct order. All CSS added to the single style element is wrapped in 
+single style element in source order. All CSS added to the single style element is wrapped in 
 media query blocks - except for those already being media query blocks. Depending on the screen size the 
 media query block queries are modified.
 
