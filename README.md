@@ -4,7 +4,7 @@
 I found while working on a site the display of a part of the page wasn't quite the same in IE when using the original Respond.js. 
 I was curious about why that was and did what any good lunatic would do and had a look in the JS.
 
-I have since figured out what was causing the issue for Respond.js. I'll upload it and post it on the Respond.js issues list soon.
+I have since created a test that recreates the display issue for Respond.js. I'll upload it and post it on the Respond.js issues list soon.
 
 ### Positive Notes
 1. Fixed the small display issue I had with the site I was working on
