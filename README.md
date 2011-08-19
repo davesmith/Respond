@@ -6,6 +6,8 @@ I was curious about why that was and did what any good lunatic would do and had 
 
 I have since created a test that recreates the display issue for Respond.js. I'll upload it and post it on the Respond.js issues list soon.
 
+### Status: Not ready
+
 ### Positive Notes
 1. Fixed the small display issue I had with the site I was working on
 2. Style elements processed
