@@ -45,7 +45,7 @@ Additionally the following code was used to prevent some IE6 weirdness: Preventi
 4. ems non-dynamically supported (depends on html element having font-size:100% or left unchanged, works on update, however no adaption if text size is increased)
 
 
-### Lastly and importantly
+### Lastly...
 A big thanks to Scott Jehl for his awesome script
 
 # Original Respond.js documentation
