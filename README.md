@@ -6,12 +6,14 @@ I was curious about why that was and did what any good lunatic would do and had 
 
 I have since created a test that recreates the display issue for Respond.js. I'll upload it and post it on the Respond.js issues list soon.
 
-### Status: Not ready
+### Status: Ready for testing, though so far so good
 
 ### Positive Notes
-1. Fixed the small display issue I had with the site I was working on
-2. Style elements processed
-3. Optimised so that calling the respond.js script element several times will work happily
+1. Link and style elements processed
+2. Media attribute supported on link and style elements
+3. ems and px supported
+4. Using the respond.js script element several times in the head should work happily (more modular hopefully)
+
 
 ### Notes
 1. The cross domain part is new to me and therefore untested
@@ -31,9 +33,18 @@ Additionally the following code was used to prevent some IE6 weirdness: Preventi
 
 ### Caveats
 1. Avoid having stylesheet link elements with an empty href (like anyone would anyway) it might mess with IE8.
+2. "not" ignored
 
-### Lastly
-Big thanks to Scott Jehl for his awesome script
+### Changelog
+13c
+1. "only" now handled. Previously Respondez-vous was failing the Respond.js test page by not showing green when it should have.
+2. Commented out mqSupported = false, which I left in there accidentally.
+3. Media attributes supported on link and style elements
+4. ems non-dynamically supported (depends on html element having font-size:100% or left unchanged, works on update, however no adaption if text size is increased)
+
+
+### Lastly and importantly
+A big thanks to Scott Jehl for his awesome script
 
 # Original Respond.js documentation
 ### A fast & lightweight polyfill for min/max-width CSS3 Media Queries (for IE 6-8, and more)
