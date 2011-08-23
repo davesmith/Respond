@@ -6,7 +6,7 @@ I was curious about why that was and did what any good lunatic would do and had 
 
 The display issue was because I had media attribute on a link element, muh, read the documentation Dave :)
 
-### Status: Ready for testing, though so far so good
+### Status: Ready for testing, so far so good
 
 ### Positive Notes
 1. Link and style elements processed
