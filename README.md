@@ -4,7 +4,7 @@
 I found while working on a site the display of a part of the page wasn't quite the same in IE when using the original Respond.js. 
 I was curious about why that was and did what any good lunatic would do and had a look in the JS.
 
-I have since created a test that recreates the display issue for Respond.js. I'll upload it and post it on the Respond.js issues list soon.
+The display issue was because I had media attribute on a link element, muh, read the documentation Dave :)
 
 ### Status: Ready for testing, though so far so good
 
@@ -13,6 +13,7 @@ I have since created a test that recreates the display issue for Respond.js. I'l
 2. Media attribute supported on link and style elements
 3. ems and px supported
 4. Using the respond.js script element several times in the head should work happily (more modular hopefully)
+5. Still fast
 
 
 ### Notes
@@ -33,7 +34,7 @@ Additionally the following code was used to prevent some IE6 weirdness: Preventi
 
 ### Caveats
 1. Avoid having stylesheet link elements with an empty href (like anyone would anyway) it might mess with IE8.
-2. "not" ignored
+2. "not" is ignored in queries, meaning whether a "not" is used or not the CSS will get applied (probably should change this)
 
 ### Changelog
 13c
