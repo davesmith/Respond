@@ -38,6 +38,7 @@ Additionally the following code was used to prevent some IE6 weirdness: Preventi
 
 ### Changelog
 13c
+
 1. "only" now handled. Previously Respondez-vous was failing the Respond.js test page by not showing green when it should have.
 2. Commented out mqSupported = false, which I left in there accidentally.
 3. Media attributes supported on link and style elements
