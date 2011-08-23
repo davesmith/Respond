@@ -37,7 +37,7 @@ Additionally the following code was used to prevent some IE6 weirdness: Preventi
 2. "not" is ignored in queries, meaning whether a "not" is used or not the CSS will get applied (probably should change this)
 
 ### Changelog
-13c 2011 August 23
+13c (2011 August 23)
 
 1. "only" now handled. Previously Respondez-vous was failing the Respond.js test page by not showing green when it should have.
 2. Commented out mqSupported = false, which I left in there accidentally.
