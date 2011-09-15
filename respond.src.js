@@ -1,7 +1,7 @@
 //
 // Dave Smith's fork of the excellent Respond.js polyfill by Scott Jehl
 // http://github.com/davesmith/Respond
-// 13c
+// 14
 
 //var ttt = '';
 
@@ -9,28 +9,47 @@
 
     var respondezVousStyleSheetLength = 0;
     
-	//mqSupported = false; // Only uncomment for testing on media query enabled browsers.
+    //mqSupported = false; // Only uncomment for testing on media query enabled browsers.
+	
+	var respondezVous = 'respondezVous',
+	Stylesheets = 'b',
+	StyleElement = 'c',
+	Account = 'd',
+	Update = 'e',
+	AjaxDone = 'f',
+	AjaxCheckSum = 'g',
+	CreateCheckSum = 'h',
+	AjaxCount = 'i',
+	MediaQueryList = 'j',
+	MediaQueryList1 = 'k',
+	MediaQueryLists = 'l',
+	CSS = 'm',
+	styleString = 'style',
+	___respondezVous = '___respondezVous',
+	respondezVousStyleElementID = 'respondezVous-' + styleString + '-element',
+	RESPONDEZVOUSRESPONDEZVOUSRESPONDEZVOUS = 'RESPONDEZVOUSRESPONDEZVOUSRESPONDEZVOUS';
 	
 	// Is respondezVous already existing?
-	if (win.respondezVous) {
+	if (win[respondezVous]) {
 		// If media queries are supported, exit here
 		if (mqSupported) {
 			return;
 		}
 		// Do update but not of any stylesheets already loaded.
-		respondezVous.update(true);
+		win[respondezVous][Update](true);
 	}
 	else {
 		//exposed namespace
-		win.respondezVous = {};
+		win[respondezVous] = {};
 		
-		respondezVous.account = [];
+		
+		win[respondezVous][Account] = [];
 		
 		//define update even in native-mq-supporting browsers, to avoid errors
-		respondezVous.update = function () {};
+		win[respondezVous][Update] = function () {};
 	
 		//expose media query support flag for external use
-		respondezVous.mediaQueriesSupported = mqSupported;
+		win[respondezVous].mediaQueriesSupported = mqSupported;
 		
 		// If media queries are supported, exit here
 		if (mqSupported) {
@@ -98,10 +117,10 @@
 		}
 		
 		// Stylesheet store array.
-		respondezVous.stylesheets = [];
+		win[respondezVous][Stylesheets] = [];
 		
 		// AJAX helper function
-		respondezVous.createCheckSum = function(n) {
+		win[respondezVous][CreateCheckSum] = function(n) {
 			var rtn = n;
 			if (n > 1) {
 				rtn = 0;
@@ -112,32 +131,41 @@
 			return rtn;
 		};
 		// AJAX done function.
-		respondezVous.ajaxDone = function(i, respondezVousAccountLength) {
+		win[respondezVous][AjaxDone] = function(i, respondezVousAccountLength) {
 			i++;
-			var respondezVousAccount = respondezVous.account[respondezVousAccountLength - 1];
-			respondezVousAccount.ajaxCount += i;
-			if (respondezVousAccount.ajaxCheckSum === respondezVousAccount.ajaxCount) {
+			var respondezVousAccount = win[respondezVous][Account][respondezVousAccountLength - 1];
+			respondezVousAccount[AjaxCount] += i;
+			if (respondezVousAccount[AjaxCheckSum] === respondezVousAccount[AjaxCount]) {
 				prepareMedia();
 			}
 		};
 		
 		// Update
-		respondezVous.update = function(avoidPreviouslyGotMedia) {
+		win[respondezVous][Update] = function(avoidPreviouslyGotMedia) {
 			
-			respondezVous.account.push({ajaxCount: 0, ajaxCheckSum: 0});
-			var respondezVousAccountLength = respondezVous.account.length;
+			var newAccount = {},
+				respondezVousAccountLength,
+				styleSheetArray = [],
+				styleSheetArrayLength,
+				styleSheetMediaValue;
+			
+			newAccount[AjaxCheckSum] = 0;
+			newAccount[AjaxCount] = 0;
+			win[respondezVous][Account].push(newAccount);
+			
+			respondezVousAccountLength = win[respondezVous][Account].length;
 			
 			avoidPreviouslyGotMedia = avoidPreviouslyGotMedia || false;
 			
 			// Go through all elements in the head and add new stylesheets to a stylesheet array called ss.
 			var els = docHead.getElementsByTagName('*'),
 				elsLength = els.length, i = 0, nodeName;
-			var styleSheetArray = [];
+
 			for (; i < elsLength; i++) {
 				nodeName = els[i].nodeName.toLowerCase();
-				if ((nodeName == 'link' && els[i].rel.toLowerCase() == 'stylesheet' && els[i].href) || (nodeName == 'style' && els[i].id != 'respondezVous-style-element')) {
-					if (avoidPreviouslyGotMedia && !els[i].___respondezVous) {
-						els[i].___respondezVous = true;
+				if ((nodeName == 'link' && els[i].rel.toLowerCase() == styleString + 'sheet' && els[i].href) || (nodeName == styleString && els[i].id != respondezVousStyleElementID)) {
+					if (avoidPreviouslyGotMedia && !els[i][___respondezVous]) {
+						els[i][___respondezVous] = true;
 						styleSheetArray[styleSheetArray.length] = els[i];
 					}
 				}
@@ -146,20 +174,20 @@
 			styleSheetArrayLength = styleSheetArray.length;
 			if (styleSheetArrayLength) {
 				// Move the current Respond Style Element if it exists. Otherwise create it.
-				if (respondezVous.styleElement) {
-					docHead.appendChild(respondezVous.styleElement.parentNode.removeChild(respondezVous.styleElement));
+				if (win[respondezVous][StyleElement]) {
+					docHead.appendChild(win[respondezVous][StyleElement].parentNode.removeChild(win[respondezVous][StyleElement]));
 				}
 				else {
-					respondezVous.styleElement = doc.createElement('span');
-					respondezVous.styleElement.id = 'respondezVous-style';
-					docHead.appendChild(respondezVous.styleElement);
+					win[respondezVous][StyleElement] = doc.createElement('span');
+					win[respondezVous][StyleElement].id = respondezVousStyleElementID;
+					docHead.appendChild(win[respondezVous][StyleElement]);
 				}
 				// Reference the Respond Style Element.
-				respondezVous.styleElement = doc.getElementById(respondezVous.styleElement.id);
+				win[respondezVous][StyleElement] = doc.getElementById(respondezVousStyleElementID);
 				
 				var rssl = respondezVousStyleSheetLength;
 				respondezVousStyleSheetLength += styleSheetArrayLength;
-				respondezVous.account[respondezVousAccountLength - 1].ajaxCheckSum = respondezVous.createCheckSum(styleSheetArrayLength);
+				win[respondezVous][Account][respondezVousAccountLength - 1][AjaxCheckSum] = win[respondezVous][CreateCheckSum](styleSheetArrayLength);
 				
 				// Go through each new stylesheet (that were added since the last update).
 				// Grab each link element stylesheet via AJAX. When AJAX complete, the Apply Media function is called. 
@@ -177,19 +205,19 @@
 										href += "/";
 									}
 									s = s.replace(/(url\()['"]?([^\/\)'"][^:\)'"]+)['"]?(\))/g, "$1" + href + "$2$3");
-									respondezVous.stylesheets[rssl + i] = {css: s, media: styleSheetMediaValue};
-									respondezVous.ajaxDone(i, respondezVousAccountLength);
+									win[respondezVous][Stylesheets][rssl + i] = {css: s, media: styleSheetMediaValue};
+									win[respondezVous][AjaxDone](i, respondezVousAccountLength);
 								}
 								else {
-									respondezVous.ajaxDone(i, respondezVousAccountLength);
+									win[respondezVous][AjaxDone](i, respondezVousAccountLength);
 								}
 							});
 						})(styleSheetArray[i].href, styleSheetMediaValue, i);
 					}
 					// Handle Style elements.
 					else {
-						respondezVous.stylesheets[rssl + i] = {css: styleSheetArray[i].innerHTML, media: styleSheetArray[i].media || ''};
-						respondezVous.ajaxDone(i, respondezVousAccountLength);
+						win[respondezVous][Stylesheets][rssl + i] = {css: styleSheetArray[i].innerHTML, media: styleSheetArray[i].media || ''};
+						win[respondezVous][AjaxDone](i, respondezVousAccountLength);
 					}
 				}
 			}
@@ -206,7 +234,22 @@
 		// Prepare Media Query Lists.
 		var prepareMediaQueryLists = function(mediaQueryLists) {
 
-			var rtn = [], infinity = Number.POSITIVE_INFINITY;
+			var rtn = [],
+				infinity = Number.POSITIVE_INFINITY,
+				mediaQueryList,
+				mediaQueriesLength,
+				mediaQuery,
+				mediaQueries,
+				mediaQueriesLength,
+				mediaType,
+				mediaTypeMatch,
+				lte,
+				lteMatch,
+				lteMatchLength,
+				gte,
+				gteMatch,
+				gteMatchLength,
+				regexpr;
 			
 			for (var i = 0; i < mediaQueryLists.length; i++) {
 			
@@ -276,22 +319,34 @@
 		
 		// Add Media Query Block function
 		var addMediaQueryBlock = function(respondezVousStyleSheetMediaValue, css, mediaQueryList) {
-			var length = respondezVousMediaQueryBlocks.push({
-				mediaQueryList: mediaQueryList,
-				mediaQueryList1: respondezVousStyleSheetMediaValue || '',
-				mediaQueryLists: prepareMediaQueryLists([respondezVousStyleSheetMediaValue || '', mediaQueryList]),
-				css: css
-			});
+			var newMediaQueryBlock = {};
+			newMediaQueryBlock[MediaQueryList] = mediaQueryList;
+			newMediaQueryBlock[MediaQueryList1] = respondezVousStyleSheetMediaValue || '';
+			newMediaQueryBlock[MediaQueryLists] = prepareMediaQueryLists([respondezVousStyleSheetMediaValue || '', mediaQueryList]);
+			newMediaQueryBlock[CSS] = css;
+			var length = respondezVousMediaQueryBlocks.push(newMediaQueryBlock);
 		};
 		
 		// Prepare Media function.
 		var prepareMedia = function(undefined) {
-			var rssl = respondezVous.stylesheets.length, i = 0, j = 0, css, respondezVousStyleSheetMediaValue;
+			var rssl = win[respondezVous][Stylesheets].length,
+				i = 0,
+				j = 0,
+				css,
+				respondezVousStyleSheet,
+				respondezVousStyleSheetMediaValue,
+				cssSplitAtMediaArray,
+				cssBeforeFirstAtMedia,
+				cssSplitAtMediaArrayLength,
+				cssAfterMediaQueryList,
+				mediaQueryList,
+				cssAfterMediaQueryListSplit,
+				cssAfterMediaQueryBlock;
 			
 			// Go through each Respond stylesheet.
 			for (; i < rssl; i++) {
 				
-				respondezVousStyleSheet = respondezVous.stylesheets[i];
+				respondezVousStyleSheet = win[respondezVous][Stylesheets][i];
 				
 				css = respondezVousStyleSheet.css;
 				respondezVousStyleSheetMediaValue = respondezVousStyleSheet.media;
@@ -320,10 +375,10 @@
 						cssAfterMediaQueryList = cssAfterMediaQueryList.join('{');
 						
 						// Find the CSS after the media query block and add to the Media Query Blocks Array.
-						cssAfterMediaQueryList = cssAfterMediaQueryList.replace(/\}[^\{]+\}/g, "}\nRESPONDEZVOUSRESPONDEZVOUSRESPONDEZVOUS");
-						cssAfterMediaQueryListSplit = cssAfterMediaQueryList.split('RESPONDEZVOUSRESPONDEZVOUSRESPONDEZVOUS');						
+						cssAfterMediaQueryList = cssAfterMediaQueryList.replace(/\}[^\{]+\}/g, "}\n"+RESPONDEZVOUSRESPONDEZVOUSRESPONDEZVOUS);
+						cssAfterMediaQueryListSplit = cssAfterMediaQueryList.split(RESPONDEZVOUSRESPONDEZVOUSRESPONDEZVOUS);						
 						css = cssAfterMediaQueryListSplit.shift();
-						cssAfterMediaQueryBlock = cssAfterMediaQueryListSplit.join('RESPONDEZVOUSRESPONDEZVOUSRESPONDEZVOUS').replace(/^\s+|\s+$/g, '');
+						cssAfterMediaQueryBlock = cssAfterMediaQueryListSplit.join(RESPONDEZVOUSRESPONDEZVOUSRESPONDEZVOUS).replace(/^\s+|\s+$/g, '');
 						addMediaQueryBlock(respondezVousStyleSheetMediaValue, css, mediaQueryList);
 						if (cssAfterMediaQueryBlock) {
 							addMediaQueryBlock(respondezVousStyleSheetMediaValue, cssAfterMediaQueryBlock);
@@ -334,7 +389,7 @@
 			/** /
 			for (i = 0; i < respondezVousMediaQueryBlocks.length; i++) {
 				var block = respondezVousMediaQueryBlocks[i];
-				mediaQueryLists = block.mediaQueryLists;
+				mediaQueryLists = block[MediaQueryLists];
 				mediaQueryListsLength = mediaQueryLists.length;
 				for (j = 0; j < mediaQueryListsLength; j++) {
 					var queries = mediaQueryLists[j];
@@ -345,7 +400,7 @@
 					}
 					ttt += '---<br/ >';
 				}
-				ttt += "\t"+block.css+'<br />=================<br />';
+				ttt += "\t"+block[CSS]+'<br />=================<br />';
 			}
 			/**/
 			applyMedia();
@@ -357,11 +412,20 @@
 				docElemProp = docElem[name],
 				docBodyProp = (doc.body) ? doc.body[name] : undefined,
 				currWidth = doc.compatMode === "CSS1Compat" && docElemProp || docBodyProp || docElemProp,
-				ssl = respondezVous.stylesheets.length, block, mediaQueryList, query,
-				i = 0, j, cssText = '',
-					now = (new Date()).getTime();
-			
-			respondezVousMediaQueryBlocksLength = respondezVousMediaQueryBlocks.length;
+				ssl = win[respondezVous][Stylesheets].length,
+				block,
+				mediaQueryList,
+				query,
+				query2,
+				i = 0,
+				j,
+				cssText = '',
+				now = (new Date()).getTime(),
+				respondezVousMediaQueryBlocksLength = respondezVousMediaQueryBlocks.length,
+				blockmediaQueryLists0,
+				blockmediaQueryLists1,
+				blockmediaQueryLists0Length,
+				blockmediaQueryLists1Length;
 			
 			for (i = 0; i < respondezVousMediaQueryBlocksLength; i++) {
 				
@@ -369,8 +433,8 @@
 				
 				block = respondezVousMediaQueryBlocks[i]; // = {mediaQueryList, mediaQueryLists, css}
 				
-				blockmediaQueryLists0 = block.mediaQueryLists[0] || [];
-				blockmediaQueryLists1 = block.mediaQueryLists[1] || [];
+				blockmediaQueryLists0 = block[MediaQueryLists][0] || [];
+				blockmediaQueryLists1 = block[MediaQueryLists][1] || [];
 				blockmediaQueryLists0Length = blockmediaQueryLists0.length;
 				blockmediaQueryLists1Length = blockmediaQueryLists1.length;
 				
@@ -406,12 +470,12 @@
 					}
 				}
 				if (mediaQueryList === '') {
-					mediaQueryList = ' ' + (block.mediaQueryList || block.mediaQueryList1);
+					mediaQueryList = ' ' + (block[MediaQueryList] || block[MediaQueryList1]);
 				}
 				else {
 					mediaQueryList = ' ' + mediaQueryList.substr(1);
 				}
-				cssText += '@media ' + mediaQueryList + ' {' + block.css + "\n" + '}' + "\n\n";
+				cssText += '@media ' + mediaQueryList + ' {' + block[CSS] + "\n" + '}' + "\n\n";
 			}
 			/*
 			var output = document.getElementById('output');
@@ -420,16 +484,16 @@
 				output.innerHTML = '<pre>'+ttt+'<br /><br />'+cssText+'</pre>';
 			}
 			*/
-			respondezVous.styleElement = doc.getElementById(respondezVous.styleElement.id);
+			win[respondezVous][StyleElement] = doc.getElementById(respondezVousStyleElementID);
 			if (ssl === respondezVousStyleSheetLength) {
-				respondezVous.styleElement.innerHTML = '_<style id="respondezVous-style-element">' + cssText + '</style>';
+				win[respondezVous][StyleElement].innerHTML = '_<' + styleString + ' id="' + respondezVousStyleElementID + '">' + cssText + '</' + styleString + '>';
 			}
 		};
 		// End of applyMedia function
 		
 		
 		// Get things started.
-		respondezVous.update(true);
+		win[respondezVous][Update](true);
 	
 		function callMedia() {
 			if (win.removeEventListener) {
@@ -468,13 +532,14 @@ this, (function (win) {
         fakeUsed = !doc.body,
         fakeBody = doc.body || doc.createElement("body"),
         div = doc.createElement("div"),
-        q = "only all";
+        q = "only all",
+		styleString = 'style';
 
     div.id = "mq-test-1";
     div.style.cssText = "position:absolute;top:-99em";
     fakeBody.appendChild(div);
 
-    div.innerHTML = '_<style media="' + q + '"> #mq-test-1 { width: 9px; }</style>';
+    div.innerHTML = '_<' + styleString + ' media="' + q + '"> #mq-test-1 { width: 9px; }</' + styleString + '>';
     if (fakeUsed) {
         docElem.insertBefore(fakeBody, refNode);
     }
