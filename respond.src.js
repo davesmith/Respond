@@ -1,7 +1,4 @@
-//
-// Dave Smith's fork of the excellent Respond.js polyfill by Scott Jehl
-// http://github.com/davesmith/Respond
-// 14
+/*! Dave Smith's fork of Respond.js 14: github.com/davesmith/respondjs  */
 
 //var ttt = '';
 
@@ -25,9 +22,9 @@
 	MediaQueryLists = 'l',
 	CSS = 'm',
 	styleString = 'style',
-	___respondezVous = '___respondezVous',
-	respondezVousStyleElementID = 'respondezVous-' + styleString + '-element',
-	RESPONDEZVOUSRESPONDEZVOUSRESPONDEZVOUS = 'RESPONDEZVOUSRESPONDEZVOUSRESPONDEZVOUS';
+	___respondezVous = '___' + respondezVous,
+	respondezVousStyleElementID = respondezVous + '-' + styleString + '-element',
+	RESPONDEZVOUSRESPONDEZVOUSRESPONDEZVOUS = respondezVous + respondezVous + respondezVous;
 	
 	// Is respondezVous already existing?
 	if (win[respondezVous]) {
