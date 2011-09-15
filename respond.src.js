@@ -21,7 +21,11 @@
 	MediaQueryList1 = 'k',
 	MediaQueryLists = 'l',
 	CSS = 'm',
-	styleString = 'style',
+    removeEventListenerString = 'removeEventListener',
+    addEventListenerString = 'addEventListener',
+    styleString = 'style',
+    resizeString = 'resize',
+    allString = 'all',
 	___respondezVous = '___' + respondezVous,
 	respondezVousStyleElementID = respondezVous + '-' + styleString + '-element',
 	RESPONDEZVOUSRESPONDEZVOUSRESPONDEZVOUS = respondezVous + respondezVous + respondezVous;
@@ -255,9 +259,9 @@
 				rtn2 = rtn[rtn.length - 1];
 			
 				if (!mediaQueryList || mediaQueryList === '') {
-					//respondezVousQueries['all_gte_0_lte_' + infinity] = {mediaType:'all', gte:0, lte:infinity};
+					//respondezVousQueries['all_gte_0_lte_' + infinity] = {mediaType:allString, gte:0, lte:infinity};
 					//rtn2.push(respondezVousQueries['all_gte_0_lte_' + infinity]);
-					rtn2.push({mediaType:'all', gte:0, lte:infinity});
+					rtn2.push({mediaType:allString, gte:0, lte:infinity});
 				}
 				else {
 					// Split the media query list into individual media queries.
@@ -270,7 +274,7 @@
 						
 						mediaQuery = mediaQuery.replace(/and|only|not/g, '');
 						
-						mediaType = 'all';
+						mediaType = allString;
 						mediaTypeMatch = mediaQuery.match(/[\s\n]*(\w+)[\s\n]*/);
 						if (mediaTypeMatch) {
 							mediaType = mediaTypeMatch[1];
@@ -447,11 +451,11 @@
 								
 								query2 = blockmediaQueryLists1[k];
 								
-								if (query.mediaType === query2.mediaType || query2.mediaType === 'all' || query.mediaType === 'all') {
+								if (query.mediaType === query2.mediaType || query2.mediaType === allString || query.mediaType === allString) {
 									
 									if (query2.gte <= currWidth && currWidth <= query2.lte) {
 										
-										if (query.mediaType === 'all') {
+										if (query.mediaType === allString) {
 											mediaQueryList += ', ' + query2.mediaType;
 										}
 										else {
@@ -493,25 +497,25 @@
 		win[respondezVous][Update](true);
 	
 		function callMedia() {
-			if (win.removeEventListener) {
-				win.removeEventListener("resize", callMedia, false);
+			if (win[removeEventListenerString]) {
+				win[removeEventListenerString](resizeString, callMedia, false);
 			}
 			else if (win.detachEvent) {
-				win.detachEvent("onresize", callMedia);
+				win.detachEvent("on" + resizeString, callMedia);
 			}
 			applyMedia(true);
-			if (win.addEventListener) {
-				win.addEventListener("resize", callMedia, false);
+			if (win[addEventListenerString]) {
+				win[addEventListenerString](resizeString, callMedia, false);
 			}
 			else if (win.attachEvent) {
-				win.attachEvent("onresize", callMedia);
+				win.attachEvent("on" + resizeString, callMedia);
 			}
 		}
-		if (win.addEventListener) {
-			win.addEventListener("resize", callMedia, false);
+		if (win[addEventListenerString]) {
+			win[addEventListenerString](resizeString, callMedia, false);
 		}
 		else if (win.attachEvent) {
-			win.attachEvent("onresize", callMedia);
+			win.attachEvent("on" + resizeString, callMedia);
 		}
 	}
 })(
