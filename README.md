@@ -37,6 +37,10 @@ Additionally the following code was used to prevent some IE6 weirdness: Preventi
 2. "not" is ignored in queries, meaning whether a "not" is used or not the CSS will get applied (probably should change this)
 
 ### Changelog
+14 (2011 September 15)
+
+1. Optimised the code for file size; same code, different weight. Minified version reduced from 7.17 KB to 4.89 KB.
+
 13c (2011 August 23)
 
 1. "only" now handled. Previously Respondez-vous was failing the Respond.js test page by not showing green when it should have.
@@ -90,7 +94,7 @@ See `cross-domain/example.html` for a demo:
 - Reference the file(s) via `<link />` element(s):
 
 <pre>
-	&lt;!-- Respond.js proxy on external server --&gt;
+    &lt;!-- Respond.js proxy on external server --&gt;
 	&lt;link href=&quot;http://externalcdn.com/respond-proxy.html&quot; id=&quot;respond-proxy&quot; rel=&quot;respond-proxy&quot; /&gt;
 	
 	&lt;!-- Respond.js redirect location on local server --&gt;
