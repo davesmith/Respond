@@ -39,7 +39,7 @@ Additionally the following code was used to prevent some IE6 weirdness: Preventi
 ### Changelog
 14 (2011 September 15)
 
-1. Optimised the code for file size; same code, different weight. Minified version reduced from 7.17 KB to 4.89 KB.
+1. Optimised the code for file size; same code, different weight. Minified version reduced from 7.17 KB to 4.86 KB.
 
 13c (2011 August 23)
 
